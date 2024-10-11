@@ -1,0 +1,36 @@
+DECLARE @StartDate DATE = '2024-01-01';
+DECLARE @EndDate DATE = '2024-12-31';
+
+SELECT  dbo.RollCall.Id, dbo.RollCall.RollCallDate, dbo.Calendar.DayOfMonth, dbo.Calendar.WeekNo, dbo.Calendar.MonthNo, dbo.Calendar.DayOfWeek, dbo.Calendar.MonthOfYear, dbo.Calendar.Year, dbo.Calendar.WeekDay, dbo.Calendar.IsWorkDay, dbo.Calendar.DayOfYear,
+ dbo.Calendar.PublicHolidayName, dbo.Team.Name AS TeamName, dbo.Campaign.Name AS CampaignName, dbo.Client.Name AS ClientName, dbo.AspNetUsers.UserName, dbo.AspNetUsers.FirstName, dbo.AspNetUsers.LastName, dbo.RollCallShift.Name AS ShiftName,
+ 
+
+        dbo.RollCallState.Name AS RollCallState, dbo.RollCallState.Category AS RollCallCategory, dbo.RollCall.IsLate, dbo.RollCall.Notes, dbo.RollCall.ClientId, dbo.RollCall.CampaignId, dbo.RollCall.TeamId, dbo.RollCallState.Code, GETDATE() AS TodayDate, dbo.RollCallState.AttendanceCalcDef,
+ dbo.AspNetUsers.EmployeeCode, dbo.Campaign.PayrollName, dbo.EmploymentState.AttritionCategory, dbo.EmploymentState.Name AS CurrentEmploymentState, dbo.Calendar.MonthStartDate, dbo.Calendar.MonthEndDate, dbo.Calendar.DaysInMonth, dbo.Calendar.WorkingDaysInMonth,
+ 
+
+        dbo.Calendar.WorkingDaysLeftInMonth, dbo.Calendar.DaysLeftInMonth
+
+FROM    dbo.Calendar INNER JOIN
+
+        dbo.RollCall ON dbo.Calendar.Date = dbo.RollCall.RollCallDate INNER JOIN
+
+        dbo.AspNetUsers ON dbo.RollCall.EmployeeId = dbo.AspNetUsers.Id INNER JOIN
+
+        dbo.RollCallShift ON dbo.RollCall.RollCallShiftId = dbo.RollCallShift.Id INNER JOIN
+
+        dbo.Team ON dbo.RollCall.TeamId = dbo.Team.Id INNER JOIN
+
+        dbo.Campaign ON dbo.RollCall.CampaignId = dbo.Campaign.Id INNER JOIN
+
+        dbo.Client ON dbo.RollCall.ClientId = dbo.Client.Id INNER JOIN
+
+        dbo.EmploymentState ON dbo.AspNetUsers.EmploymentStateId = dbo.EmploymentState.Id INNER JOIN
+
+        dbo.RollCallState ON dbo.RollCall.RollCallStateId = dbo.RollCallState.Id where DATEADD(dd, DATEDIFF(dd, 0, RollCallDate), 0)
+
+between DATEADD(dd, DATEDIFF(dd, 0, @StartDate), 0) and DATEADD(dd, DATEDIFF(dd, 0, @Enddate), 0)
+
+and dbo.RollCall.TeamId in (35)
+
+order by CampaignName,TeamName,RollCallDate
